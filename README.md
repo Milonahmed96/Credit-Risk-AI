@@ -10,7 +10,7 @@ When evaluating a customer's creditworthiness, a bank faces two types of classif
 * **False Negative (Approve a defaulter):** High financial loss (loss of principal balance and recovery costs).
 * **False Positive (Reject a good customer):** Opportunity loss and customer dissatisfaction (loss of future interest and transaction fees).
 
-👉 **The Banking Approach:** Because the cost of a default is significantly higher than the cost of a lost customer, a standard 0.5 decision threshold is financially dangerous. This project utilizes **cost-aware threshold tuning** to minimize total expected financial loss across the portfolio.
+**The Banking Approach:** Because the cost of a default is significantly higher than the cost of a lost customer, a standard 0.5 decision threshold is financially dangerous. This project utilizes **cost-aware threshold tuning** to minimize total expected financial loss across the portfolio.
 
 ## Data Description
 * **Dataset:** UCI Credit Card Default (Taiwan)

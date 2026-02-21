@@ -1,30 +1,41 @@
-
-from sklearn.linear_model import LogisticRegression
+import joblib
 import xgboost as xgb
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegressionCV
+from src.preprocessing import get_preprocessor
 
-def train_baseline_logistic(X_train, y_train):
+def train_baseline_pipeline(X_train, y_train, save_path='baseline_pipeline.pkl'):
     """
-    Trains a class-weighted Logistic Regression baseline model.
+    Builds and trains the Logistic Regression CV pipeline.
     """
-    log_reg = LogisticRegression(class_weight='balanced', random_state=42, max_iter=1000)
-    log_reg.fit(X_train, y_train)
-    return log_reg
+    preprocessor, _, _ = get_preprocessor(X_train)
+    
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', LogisticRegressionCV(
+            class_weight='balanced', cv=5, scoring='roc_auc', random_state=42, max_iter=1000
+        ))
+    ])
+    
+    pipeline.fit(X_train, y_train)
+    joblib.dump(pipeline, save_path)
+    return pipeline
 
-def train_advanced_xgboost(X_train, y_train):
+def train_xgboost_pipeline(X_train, y_train, save_path='xgboost_pipeline.pkl'):
     """
-    Trains a gradient boosting model adjusted for class imbalance.
+    Builds and trains the XGBoost pipeline adjusted for class imbalance.
     """
+    preprocessor, _, _ = get_preprocessor(X_train)
     class_ratio = y_train.value_counts()[0] / y_train.value_counts()[1]
     
-    xgb_model = xgb.XGBClassifier(
-        scale_pos_weight=class_ratio,
-        n_estimators=100,
-        max_depth=4,
-        learning_rate=0.1,
-        subsample=0.8,
-        random_state=42,
-        use_label_encoder=False,
-        eval_metric='logloss'
-    )
-    xgb_model.fit(X_train, y_train)
-    return xgb_model
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', xgb.XGBClassifier(
+            scale_pos_weight=class_ratio, n_estimators=100, max_depth=4, 
+            learning_rate=0.1, subsample=0.8, random_state=42, eval_metric='logloss'
+        ))
+    ])
+    
+    pipeline.fit(X_train, y_train)
+    joblib.dump(pipeline, save_path)
+    return pipeline

@@ -1,4 +1,4 @@
-# 🏦 Credit Risk AI: Banking-Grade Loan Default Prediction
+# Credit Risk AI: Banking-Grade Loan Default Prediction
 
 ## Problem Statement
 In retail banking, assessing credit risk is a high-stakes balancing act. The objective of this project is to build an interpretable, production-ready machine learning pipeline that predicts whether a credit card client will default in the next billing cycle. 
@@ -10,7 +10,7 @@ When evaluating a customer's creditworthiness, a bank faces two types of classif
 * **False Negative (Approve a defaulter):** High financial loss (loss of principal balance and recovery costs, simulated at $5,000).
 * **False Positive (Reject a good customer):** Opportunity loss and customer dissatisfaction (loss of future interest and transaction fees, simulated at $1,000).
 
-👉 **The Banking Approach:** Because the cost of a default is significantly higher than the cost of a lost customer, a standard 0.5 decision threshold is financially dangerous. This project utilizes **cost-aware threshold tuning** to minimize total expected financial loss across the portfolio.
+**The Banking Approach:** Because the cost of a default is significantly higher than the cost of a lost customer, a standard 0.5 decision threshold is financially dangerous. This project utilizes **cost-aware threshold tuning** to minimize total expected financial loss across the portfolio.
 
 ## Data & Feature Engineering
 * **Dataset:** UCI Credit Card Default (Taiwan)

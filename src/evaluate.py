@@ -1,34 +1,41 @@
-import numpy as np
-from sklearn.metrics import classification_report, roc_auc_score, average_precision_score, confusion_matrix
+import joblib
+import xgboost as xgb
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegressionCV
+from src.preprocessing import get_preprocessor
 
-def print_evaluation_metrics(y_true, y_pred_prob, threshold=0.5):
+def train_baseline_pipeline(X_train, y_train, save_path='baseline_pipeline.pkl'):
     """
-    Prints standard banking evaluation metrics including ROC-AUC and PR-AUC.
+    Builds and trains the Logistic Regression CV pipeline.
     """
-    y_pred = (y_pred_prob >= threshold).astype(int)
+    preprocessor, _, _ = get_preprocessor(X_train)
     
-    print(f"Metrics at Threshold = {threshold}")
-    print(f"ROC-AUC Score: {roc_auc_score(y_true, y_pred_prob):.4f}")
-    print(f"PR-AUC Score:  {average_precision_score(y_true, y_pred_prob):.4f}\n")
-    print("Classification Report:")
-    print(classification_report(y_true, y_pred, target_names=['Non-Default (0)', 'Default (1)']))
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', LogisticRegressionCV(
+            class_weight='balanced', cv=5, scoring='roc_auc', random_state=42, max_iter=1000
+        ))
+    ])
+    
+    pipeline.fit(X_train, y_train)
+    joblib.dump(pipeline, save_path)
+    return pipeline
 
-def optimize_business_threshold(y_true, y_pred_prob, cost_fn=5000, cost_fp=1000):
+def train_xgboost_pipeline(X_train, y_train, save_path='xgboost_pipeline.pkl'):
     """
-    Simulates a business cost matrix to find the optimal decision threshold 
-    that minimizes expected portfolio loss.
+    Builds and trains the XGBoost pipeline adjusted for class imbalance.
     """
-    thresholds = np.linspace(0.1, 0.9, 100)
-    costs = []
+    preprocessor, _, _ = get_preprocessor(X_train)
+    class_ratio = y_train.value_counts()[0] / y_train.value_counts()[1]
     
-    for t in thresholds:
-        y_pred_t = (y_pred_prob >= t).astype(int)
-        tn, fp, fn, tp = confusion_matrix(y_true, y_pred_t).ravel()
-        total_cost = (fn * cost_fn) + (fp * cost_fp)
-        costs.append(total_cost)
-        
-    optimal_idx = np.argmin(costs)
-    optimal_threshold = thresholds[optimal_idx]
-    min_cost = costs[optimal_idx]
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', xgb.XGBClassifier(
+            scale_pos_weight=class_ratio, n_estimators=100, max_depth=4, 
+            learning_rate=0.1, subsample=0.8, random_state=42, eval_metric='logloss'
+        ))
+    ])
     
-    return optimal_threshold, min_cost, thresholds, costs
+    pipeline.fit(X_train, y_train)
+    joblib.dump(pipeline, save_path)
+    return pipeline

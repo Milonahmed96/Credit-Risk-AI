@@ -64,6 +64,27 @@ git clone [https://github.com/Milonahmed96/Credit-Risk-AI.git](https://github.co
 cd credit-risk-ai
 python -m uvicorn src.app:app --reload
 
+## Limitations & Ethical Considerations
+
+Building a FinTech AI requires extreme scrutiny. While this system is robust, it operates under several assumptions and limitations that must be addressed before real-world deployment:
+
+* **The Static Cost Matrix Assumption:** The threshold optimization assumes a fixed $5,000 loss for defaults and a $1,000 loss for false positives. In reality, credit limits and balances are highly dynamic. A production system should calculate cost dynamically *per applicant* based on their requested loan amount.
+* **Concept Drift & Temporal Limitations:** The underlying dataset is based on Taiwan credit data from 2005. Economic conditions (inflation, interest rates, housing markets) shift continuously. A model trained on 2005 data will naturally degrade (concept drift) when predicting 2026 economic behaviors.
+
+## Bias & Fairness (Fair Lending Compliance)
+To maximize raw predictive power during the research phase, demographic features like `sex` and `marriage` were included in the dataset. However, in a real US or EU banking environment, utilizing these features violates the **Equal Credit Opportunity Act (ECOA)** and Fair Lending laws. 
+* **The Fix:** Before deploying this to a real banking production environment, all protected demographic classes must be explicitly dropped from the training data, and the model must be audited using Disparate Impact analysis to ensure it does not unintentionally proxy these variables (e.g., zip codes proxying race).
+
+## What Research Could Improve This
+* **Macroeconomic Indicators:** The model currently only looks at micro-level customer behavior. Incorporating macro-features like the current national unemployment rate, inflation index, and federal interest rates would make the model resilient to market crashes.
+* **Survival Analysis:** Moving beyond binary classification (Will they default? Yes/No) to Survival Analysis (At what specific month will they default?) would allow the bank to intervene proactively before the default occurs.
+
+## How the System Could Evolve (V2 Architecture)
+To scale this from a local API to an enterprise-grade banking application, the following infrastructure upgrades are required:
+1. **Containerization:** Wrapping the FastAPI server in **Docker** and deploying it via Kubernetes (EKS/GKE) to handle thousands of concurrent loan applications.
+2. **MLflow Model Registry:** Implementing MLflow to track model versions and trigger automated retraining pipelines when data drift is detected.
+3. **Cloud Database:** Transitioning the JSON compliance Audit Log to a secure, encrypted PostgreSQL database on AWS RDS for permanent regulatory storage.
+
 ## Tech Stack Used
 
 Core Machine Learning: scikit-learn (Pipelines, Preprocessing), XGBoost.

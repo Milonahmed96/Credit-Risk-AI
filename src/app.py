@@ -16,7 +16,7 @@ app = FastAPI(
 # 2. Load the Production Pipeline
 try:
     # Adjust this path based on where you run the server
-    model_pipeline = joblib.load('../models/xgboost_model_pipeline.pkl') 
+    model_pipeline = joblib.load('models/xgboost_model_pipeline.pkl') 
 except Exception as e:
     model_pipeline = None
     print(f"Warning: Model not found. Please ensure the .pkl file is in the correct directory. {e}")

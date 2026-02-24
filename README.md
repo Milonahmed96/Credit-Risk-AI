@@ -1,4 +1,4 @@
-# Credit Risk AI: Banking-Grade Loan Default Prediction
+# AI Credit Decision Engine: From Predictive ML to Production API
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Production-green.svg)

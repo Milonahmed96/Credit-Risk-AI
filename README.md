@@ -1,7 +1,12 @@
 # Credit Risk AI: Banking-Grade Loan Default Prediction
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-Production-green.svg)
+![XGBoost](https://img.shields.io/badge/XGBoost-Optimized-orange.svg)
+![Status](https://img.shields.io/badge/Status-Complete-success.svg)
+
 ## Problem Statement
-In retail banking, assessing credit risk is a high-stakes balancing act. The objective of this project is to build an interpretable, production-ready machine learning pipeline that predicts whether a credit card client will default in the next billing cycle. 
+In retail banking, assessing credit risk is a high-stakes balancing act. The objective of this project is to build an interpretable, production-ready machine learning pipeline that will both predicts whether a credit card client will default in the next billing cycle and build production decesion engine going beyond just applied data science into AI Engineering.
 
 Crucially, this project moves beyond standard machine learning accuracy to focus on **banking-style decision-making**, optimizing for financial impact, risk mitigation, and regulatory explainability.
 
@@ -42,5 +47,28 @@ To comply with financial regulations and build trust with risk analysts, this mo
 * **Global Interpretability:** Logistic regression coefficients highlight directional risk (e.g., `avg_payment_delay` increases risk, while a higher `limit_bal` decreases risk).
 * **Local Interpretability:** SHAP (SHapley Additive exPlanations) values were extracted dynamically from the XGBoost pipeline. The SHAP summary plot proves that engineered behavioral features—specifically historical payment delays and credit utilization ratios—are the primary drivers of model decisions, satisfying regulatory governance constraints.
 
-***
+
+## The AI Decision Engine
+When a customer applies for a loan, they do not just hit the ML model. They pass through a simulated banking backend:
+
+Hard Policy Check: Is utilization_ratio > 95%? Auto-Reject.
+Hard Policy Check: Is avg_payment_delay > 2 months? Auto-Reject.
+ML Risk Scoring: If policies pass, feed data to the XGBoost Pipeline.
+Optimized Threshold Check: If ML Probability >= 0.42 -> Reject; Else -> Approve.
+
+## How to Run the Live API Locally
+Want to test the model like a Front-End Developer or Bank Manager? You can spin up the live API server on your machine in seconds.
+Clone this repository and navigate to the folder:
+
+git clone [https://github.com/Milonahmed96/Credit-Risk-AI.git](https://github.com/Milonahmed96/Credit-Risk-AI.git)
+cd credit-risk-ai
+python -m uvicorn src.app:app --reload
+
+## Tech Stack Used
+
+Core Machine Learning: scikit-learn (Pipelines, Preprocessing), XGBoost.
+Explainable AI (XAI): SHAP (Global and Local Interpretability).
+Engineering & Deployment: FastAPI, Uvicorn, Pydantic, joblib.
+Data & Math: pandas, numpy.
+
 *Author: Milon Ahmed | Founder of Ahmed Intelligence*
